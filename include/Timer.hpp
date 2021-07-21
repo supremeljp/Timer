@@ -43,6 +43,14 @@ public:
             }
         }).detach();
     }
+    template<class F, class... Args>
+    void StartOnce(int interval, F&& f, Args... args)
+    {
+        std::thread([interval, f, args...](){
+            std::this_thread::sleep_for(std::chrono::milliseconds(interval));
+            f(args...);
+        }).detach();
+    }
 
     void Stop()
     {
