@@ -29,13 +29,12 @@ public:
             return;
         }
         m_bExpired = false;
-        using RetType = decltype(f(args...));
-        std::function<RetType()> task = (std::bind(std::forward<F>(f), std::forward<Args>(args)...));
-        std::thread([this, interval, task](){
+        
+        std::thread([this, interval, f, args...](){
             while(!m_bTryToExpired)
             {
                 std::this_thread::sleep_for(std::chrono::milliseconds(interval));
-                task();
+                f(args...);
             }
             {
                 std::lock_guard<std::mutex> lock(m_Mutex);
